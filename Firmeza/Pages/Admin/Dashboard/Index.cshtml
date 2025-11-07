@@ -1,0 +1,81 @@
+@page
+@model Firmeza.Pages.Admin.Dashboard.IndexModel
+
+@{
+    ViewData["Title"] = "Administrator Dashboard";
+}
+
+<div class="container mt-5">
+    <h1 class="mb-4 text-center">@ViewData["Title"]</h1>
+    <hr />
+
+    <h2 class="mb-3">Key Metrics</h2>
+
+    <div class="row">
+        
+        <!-- Total Products Card -->
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card text-white bg-primary shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-uppercase">Total Products</h5>
+                    <div class="display-4">@Model.TotalProducts</div>
+                    <a asp-page="./Products/Index" class="text-white small stretched-link">View Inventory</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Clients Card -->
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card text-white bg-success shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-uppercase">Total Clients</h5>
+                    <div class="display-4">@Model.TotalClients</div>
+                    <a asp-page="./Clients/Index" class="text-white small stretched-link">Manage Clients</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Sales Count Card -->
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card text-white bg-info shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-uppercase">Total Sales</h5>
+                    <div class="display-4">@Model.TotalSalesCount</div>
+                    <a asp-page="./Sales/Index" class="text-white small stretched-link">View Orders</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Total Revenue Card -->
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card text-white bg-warning shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-uppercase">Total Revenue</h5>
+                    <div class="display-4">@Model.TotalRevenue.ToString("C")</div>
+                    <a asp-page="./Sales/Index" class="text-white small stretched-link">Review Finances</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <h2 class="mb-3 mt-4">Management Quick Links</h2>
+
+    <div class="list-group">
+        <a asp-page="./Products/Index" class="list-group-item list-group-item-action">
+            <i class="fas fa-boxes"></i> Product Inventory Management (CRUD)
+        </a>
+        <a asp-page="./Clients/Index" class="list-group-item list-group-item-action">
+            <i class="fas fa-users"></i> Client Account Management (Details/Edit)
+        </a>
+        <a asp-page="./Sales/Index" class="list-group-item list-group-item-action">
+            <i class="fas fa-receipt"></i> Sales and Order Review
+        </a>
+        <!-- Add more management links here later -->
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+}

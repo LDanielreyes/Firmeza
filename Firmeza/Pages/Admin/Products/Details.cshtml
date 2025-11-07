@@ -1,0 +1,56 @@
+@page
+@model Firmeza.Pages.Admin.Products.DetailsModel
+
+@{
+    ViewData["Title"] = "Product Details";
+}
+
+<div class="container mt-4">
+    <h1>@ViewData["Title"]</h1>
+
+    <div>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Product.Name)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Product.Name)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Product.Type)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Product.Type)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Product.Description)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Product.Description)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Product.Price)
+            </dt>
+            <dd class="col-sm-9">
+                @Model.Product.Price.ToString("C")
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Product.Stock)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Product.Stock)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Product.ImageUrl)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Product.ImageUrl)
+            </dd>
+        </dl>
+    </div>
+    <div>
+        <a asp-page="./Edit" asp-route-id="@Model.Product.Id" class="btn btn-info">Edit</a>
+        <a asp-page="./Index" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>

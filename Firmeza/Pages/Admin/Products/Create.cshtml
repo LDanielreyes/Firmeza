@@ -1,0 +1,62 @@
+@page
+@model Firmeza.Pages.Admin.Products.CreateModel
+
+@{
+    ViewData["Title"] = "Create New Product";
+}
+
+<div class="container mt-4">
+    <h1>@ViewData["Title"]</h1>
+    
+    <hr />
+    <div class="row">
+        <div class="col-md-6">
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                
+                <div class="form-floating mb-3">
+                    <input asp-for="Product.Name" class="form-control" />
+                    <label asp-for="Product.Name"></label>
+                    <span asp-validation-for="Product.Name" class="text-danger"></span>
+                </div>
+                
+                <div class="form-floating mb-3">
+                    <textarea asp-for="Product.Description" class="form-control" style="height: 100px"></textarea>
+                    <label asp-for="Product.Description"></label>
+                    <span asp-validation-for="Product.Description" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="Product.Type" class="form-control" />
+                    <label asp-for="Product.Type"></label>
+                    <span asp-validation-for="Product.Type" class="text-danger"></span>
+                </div>
+                
+                <div class="form-floating mb-3">
+                    <input asp-for="Product.Price" class="form-control" />
+                    <label asp-for="Product.Price"></label>
+                    <span asp-validation-for="Product.Price" class="text-danger"></span>
+                </div>
+                
+                <div class="form-floating mb-3">
+                    <input asp-for="Product.Stock" class="form-control" />
+                    <label asp-for="Product.Stock"></label>
+                    <span asp-validation-for="Product.Stock" class="text-danger"></span>
+                </div>
+                
+                <div class="form-floating mb-3">
+                    <input asp-for="Product.ImageUrl" class="form-control" />
+                    <label asp-for="Product.ImageUrl"></label>
+                    <span asp-validation-for="Product.ImageUrl" class="text-danger"></span>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Create</button>
+                <a asp-page="Index" class="btn btn-secondary">Back to List</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

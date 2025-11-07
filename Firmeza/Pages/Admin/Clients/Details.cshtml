@@ -1,0 +1,62 @@
+@page
+@model Firmeza.Pages.Admin.Clients.DetailsModel
+
+@{
+    ViewData["Title"] = "Client Details";
+}
+
+<div class="container mt-4">
+    <h1>@ViewData["Title"]</h1>
+
+    <div>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Client.FullName)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Client.FullName)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Client.Email)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Client.Email)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Client.Phone)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Client.Phone)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Client.Age)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Client.Age)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Client.Document)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Client.Document)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Client.Address)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Client.Address)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Client.RegisterDate)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Client.RegisterDate)
+            </dd>
+        </dl>
+    </div>
+    <div>
+        <a asp-page="./Edit" asp-route-id="@Model.Client.Id" class="btn btn-info">Edit</a>
+        <a asp-page="./Index" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>

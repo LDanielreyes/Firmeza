@@ -1,0 +1,57 @@
+@page
+@model Firmeza.Pages.Admin.Clients.EditModel
+
+@{
+    ViewData["Title"] = "Edit Client";
+}
+
+<div class="container mt-4">
+    <h1>@ViewData["Title"]</h1>
+
+    <hr />
+    <div class="row">
+        <div class="col-md-6">
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Client.Id" />
+                
+                <div class="form-floating mb-3">
+                    <input asp-for="Client.FullName" class="form-control" />
+                    <label asp-for="Client.FullName"></label>
+                    <span asp-validation-for="Client.FullName" class="text-danger"></span>
+                </div>
+                
+                <div class="form-floating mb-3">
+                    <input asp-for="Client.Phone" class="form-control" />
+                    <label asp-for="Client.Phone"></label>
+                    <span asp-validation-for="Client.Phone" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="Client.Age" class="form-control" />
+                    <label asp-for="Client.Age"></label>
+                    <span asp-validation-for="Client.Age" class="text-danger"></span>
+                </div>
+                
+                <div class="form-floating mb-3">
+                    <input asp-for="Client.Document" class="form-control" />
+                    <label asp-for="Client.Document"></label>
+                    <span asp-validation-for="Client.Document" class="text-danger"></span>
+                </div>
+                
+                <div class="form-floating mb-3">
+                    <input asp-for="Client.Address" class="form-control" />
+                    <label asp-for="Client.Address"></label>
+                    <span asp-validation-for="Client.Address" class="text-danger"></span>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a asp-page="./Details" asp-route-id="@Model.Client.Id" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
