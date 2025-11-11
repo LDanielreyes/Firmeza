@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Firmeza.Data;
 
-public partial class SeedData
+public class SeedData
 {
     public static async Task InitializeAsync(IServiceProvider serviceProvider)
     {

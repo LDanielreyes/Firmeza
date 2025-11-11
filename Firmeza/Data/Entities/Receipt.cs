@@ -1,28 +1,27 @@
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Firmeza.Data.Entities;
 
-public class Receipt
+namespace Firmeza.Data.Entities
 {
-    [Key]
-    public int Id { get; set; }
-    
-    public int? ProductId { get; set; } 
-    public Product? Product { get; set; } 
-
-    public int SaleId { get; set; }
-
-    [Column(TypeName = "decimal(18, 2)")]
-    public decimal GrossTotal { get; set; }
-
-    [Column(TypeName = "decimal(18, 2)")]
-    public decimal IVATotal { get; set; }
-    
-    public List<Sale>? SaleLines { get; set; } 
-    
-    public void ShowInfo()
+    public class Receipt
     {
-        Console.WriteLine($"Receipt ID: {Id}, Total: {GrossTotal}");
+        [Key]
+        public int Id { get; set; }
+        
+        [Required]
+        public int ClientId { get; set; }
+        public Client Client { get; set; } = default!; 
+
+        [Required]
+        public DateTime ReceiptDate { get; set; } = DateTime.UtcNow;
+
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal GrossTotal { get; set; }
+
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal IvaTotal { get; set; }
+        
+        public List<Sale> SaleLines { get; set; } = new List<Sale>(); 
+        
     }
 }

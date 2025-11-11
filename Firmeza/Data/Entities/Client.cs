@@ -18,6 +18,7 @@ public class Client : Person
     public DateTime RegisterDate { get; set; } = DateTime.Now;
     
     public ICollection<Sale>? Sales { get; set; }
+    public ICollection<Receipt> Receipts { get; set; } = new List<Receipt>();
 
     public void ShowInfo()
     {

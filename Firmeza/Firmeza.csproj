@@ -30,8 +30,4 @@
       <Folder Include="Pages\Client\" />
     </ItemGroup>
 
-    <ItemGroup>
-      <AdditionalFiles Include="Pages\Identity\Account\AccesDenied.cshtml" />
-    </ItemGroup>
-
 </Project>

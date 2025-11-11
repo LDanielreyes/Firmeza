@@ -1,26 +1,26 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Firmeza.Data.Entities;
 
-public class Sale
+namespace Firmeza.Data.Entities
 {
-    [Key]
-    public int Id { get; set; }
-    
-    public int ClientId { get; set; }
-    public Client Client { get; set; } = null!;
-    
-    public int ReceiptId { get; set; } 
-    public Receipt Receipt { get; set; } = null!;
-    
-    public int ProductId { get; set; } 
-    public int Quantity { get; set; }
-    
-    [Column(TypeName = "decimal(18, 2)")]
-    public decimal NetTotal { get; set; }
-
-    public void ShowInfo()
+    public class Sale 
     {
-        Console.WriteLine($"Sale Line ID: {Id}, Product ID: {ProductId}");
+        [Key]
+        public int Id { get; set; }
+
+        [Required]
+        public int ReceiptId { get; set; } 
+        public Receipt Receipt { get; set; } = default!;
+        [Required]
+        public int ProductId { get; set; } 
+        public Product Product { get; set; } = default!; 
+        [Required]
+        public int Quantity { get; set; }
+        
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal PricePerUnit { get; set; } 
+
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal NetTotal { get; set; } 
     }
 }

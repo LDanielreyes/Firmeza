@@ -9,11 +9,4 @@ public abstract class Person: IdentityUser<int>
     [MaxLength(100)]
     public string FullName { get; set; } = string.Empty;
     
-    
-    public string Password { get; set; } = string.Empty;
-    
-    public string GetContactInfo()
-    {
-        return $"Email: {Email}";
-    }
 }

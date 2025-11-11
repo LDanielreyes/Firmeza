@@ -3,6 +3,7 @@ using System;
 using Firmeza.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Firmeza.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251110215222_CorrectionPersonModel")]
+    partial class CorrectionPersonModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,70 +60,6 @@ namespace Firmeza.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Products");
-                });
-
-            modelBuilder.Entity("Firmeza.Data.Entities.Receipt", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ClientId")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal>("GrossTotal")
-                        .HasColumnType("decimal(18, 2)");
-
-                    b.Property<decimal>("IvaTotal")
-                        .HasColumnType("decimal(18, 2)");
-
-                    b.Property<DateTime>("ReceiptDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClientId");
-
-                    b.ToTable("Receipts");
-                });
-
-            modelBuilder.Entity("Firmeza.Data.Entities.Sale", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("ClientId")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal>("NetTotal")
-                        .HasColumnType("decimal(18, 2)");
-
-                    b.Property<decimal>("PricePerUnit")
-                        .HasColumnType("decimal(18, 2)");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ReceiptId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClientId");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("ReceiptId");
-
-                    b.ToTable("Sales");
                 });
 
             modelBuilder.Entity("Firmeza.Models.Person", b =>
@@ -339,6 +278,65 @@ namespace Firmeza.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Receipt", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("GrossTotal")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<decimal>("IVATotal")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SaleId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Receipts");
+                });
+
+            modelBuilder.Entity("Sale", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("NetTotal")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ReceiptId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("ReceiptId");
+
+                    b.ToTable("Sales");
+                });
+
             modelBuilder.Entity("Firmeza.Data.Entities.Admin", b =>
                 {
                     b.HasBaseType("Firmeza.Models.Person");
@@ -378,40 +376,6 @@ namespace Firmeza.Migrations
                         .IsUnique();
 
                     b.HasDiscriminator().HasValue("Client");
-                });
-
-            modelBuilder.Entity("Firmeza.Data.Entities.Receipt", b =>
-                {
-                    b.HasOne("Firmeza.Data.Entities.Client", "Client")
-                        .WithMany("Receipts")
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Client");
-                });
-
-            modelBuilder.Entity("Firmeza.Data.Entities.Sale", b =>
-                {
-                    b.HasOne("Firmeza.Data.Entities.Client", null)
-                        .WithMany("Sales")
-                        .HasForeignKey("ClientId");
-
-                    b.HasOne("Firmeza.Data.Entities.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Firmeza.Data.Entities.Receipt", "Receipt")
-                        .WithMany("SaleLines")
-                        .HasForeignKey("ReceiptId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-
-                    b.Navigation("Receipt");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -465,15 +429,41 @@ namespace Firmeza.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Firmeza.Data.Entities.Receipt", b =>
+            modelBuilder.Entity("Receipt", b =>
+                {
+                    b.HasOne("Firmeza.Data.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Sale", b =>
+                {
+                    b.HasOne("Firmeza.Data.Entities.Client", "Client")
+                        .WithMany("Sales")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Receipt", "Receipt")
+                        .WithMany("SaleLines")
+                        .HasForeignKey("ReceiptId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Receipt");
+                });
+
+            modelBuilder.Entity("Receipt", b =>
                 {
                     b.Navigation("SaleLines");
                 });
 
             modelBuilder.Entity("Firmeza.Data.Entities.Client", b =>
                 {
-                    b.Navigation("Receipts");
-
                     b.Navigation("Sales");
                 });
 #pragma warning restore 612, 618

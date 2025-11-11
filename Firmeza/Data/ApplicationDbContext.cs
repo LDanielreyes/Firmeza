@@ -10,16 +10,13 @@ namespace Firmeza.Data
         : IdentityDbContext<Person, IdentityRole<int>, int>(options)
     {
         public DbSet<Person> People { get; set; } 
-        public DbSet<Client> Clients { get; set; }
-        public DbSet<Admin> Admins { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<Receipt> Receipts { get; set; } 
         public DbSet<Sale> Sales { get; set; }
-        public DbSet<Receipt> Receipts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
             modelBuilder.Entity<Person>()
                 .ToTable("AspNetUsers")
                 .HasDiscriminator<string>("UserType")
@@ -34,17 +31,23 @@ namespace Firmeza.Data
                 .HasIndex(c => c.Document)
                 .IsUnique();
 
-            modelBuilder.Entity<Sale>()
-                .HasOne(s => s.Client)
-                .WithMany(c => c.Sales)
-                .HasForeignKey(s => s.ClientId)
-                .OnDelete(DeleteBehavior.Restrict);
-
+            modelBuilder.Entity<Receipt>()
+                .HasOne(r => r.Client)
+                .WithMany(c => c.Receipts)
+                .HasForeignKey(r => r.ClientId)
+                .OnDelete(DeleteBehavior.Restrict); 
+            
             modelBuilder.Entity<Sale>()
                 .HasOne(s => s.Receipt)
-                .WithMany(r => r.SaleLines) // o .WithMany(r => r.Sales) si ese es el nombre real
+                .WithMany(r => r.SaleLines)
                 .HasForeignKey(s => s.ReceiptId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Sale>()
+                .HasOne(s => s.Product)
+                .WithMany() 
+                .HasForeignKey(s => s.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);     
         }
     }
 }

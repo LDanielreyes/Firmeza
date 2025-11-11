@@ -1,0 +1,67 @@
+@page
+@model Firmeza.Pages.Admin.Sales.DetailsModel
+
+@{
+    ViewData["Title"] = "Receipt Details";
+}
+
+<div class="container mt-4">
+    <h1>@ViewData["Title"] (ID: @Model.Receipt.Id)</h1>
+    <hr />
+
+    <div class="row mb-5">
+        <div class="col-md-6">
+            <h3>Receipt Information</h3>
+            <dl class="row">
+                <dt class="col-sm-4">Client:</dt>
+                <dd class="col-sm-8">@Model.Receipt.Client.FullName (@Model.Receipt.Client.Email)</dd>
+                
+                <dt class="col-sm-4">Date:</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(model => model.Receipt.ReceiptDate)</dd>
+            </dl>
+        </div>
+        <div class="col-md-6 text-end">
+             <div class="card bg-light shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-uppercase">Total Amount</h5>
+                    <div class="display-3 text-success">@Model.Receipt.GrossTotal.ToString("C")</div>
+                    <div class="small">IVA: @Model.Receipt.IvaTotal.ToString("C")</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3>Line Items (@Model.Receipt.SaleLines.Count)</h3>
+    <table class="table table-bordered table-striped mt-3">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Net Total</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var line in Model.Receipt.SaleLines)
+        {
+            <tr>
+                <td>@line.Product.Name</td>
+                <td>@line.Quantity</td>
+                <td>@line.PricePerUnit.ToString("C")</td>
+                <td>@line.NetTotal.ToString("C")</td>
+            </tr>
+        }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3" class="text-end fw-bold">Gross Total:</td>
+                <td class="fw-bold">@Model.Receipt.GrossTotal.ToString("C")</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div class="mt-4">
+        <a asp-page="./Edit" asp-route-id="@Model.Receipt.Id" class="btn btn-info">Edit Header</a>
+        <a asp-page="./Index" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>

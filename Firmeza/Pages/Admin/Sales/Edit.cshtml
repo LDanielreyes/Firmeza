@@ -1,0 +1,49 @@
+@page
+@model Firmeza.Pages.Admin.Sales.EditModel
+
+@{
+    ViewData["Title"] = "Edit Receipt";
+}
+
+<div class="container mt-4">
+    <h1>@ViewData["Title"] (ID: @Model.Receipt.Id)</h1>
+
+    <hr />
+    <div class="row">
+        <div class="col-md-6">
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Receipt.Id" />
+                <input type="hidden" asp-for="Receipt.ReceiptDate" />
+
+                <div class="form-floating mb-3">
+                    <select asp-for="Receipt.ClientId" asp-items="Model.ClientOptions" class="form-select"></select>
+                    <label asp-for="Receipt.ClientId">Client</label>
+                    <span asp-validation-for="Receipt.ClientId" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="Receipt.GrossTotal" class="form-control" type="number" step="0.01" />
+                    <label asp-for="Receipt.GrossTotal">Gross Total</label>
+                    <span asp-validation-for="Receipt.GrossTotal" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="Receipt.IvaTotal" class="form-control" type="number" step="0.01" />
+                    <label asp-for="Receipt.IvaTotal">IVA Total</label>
+                    <span asp-validation-for="Receipt.IvaTotal" class="text-danger"></span>
+                </div>
+                
+                <h4 class="mt-4">Line Items</h4>
+                <p class="text-secondary">Line items must be edited directly in the database or via a separate, more complex interface.</p>
+
+                <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+                <a asp-page="./Details" asp-route-id="@Model.Receipt.Id" class="btn btn-secondary mt-3">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
