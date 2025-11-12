@@ -1,0 +1,76 @@
+@page
+@model Firmeza.Pages.Admin.Clients.CreateModel
+
+@{
+    ViewData["Title"] = "Register New Client";
+}
+
+<div class="container mt-4">
+    <h1>@ViewData["Title"]</h1>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-8">
+            <form method="post">
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <!-- Personal Information (Person & Identity) -->
+                <h3 class="mb-3">Account Details</h3>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="ClientInput.FullName" class="form-control" />
+                    <label asp-for="ClientInput.FullName"></label>
+                    <span asp-validation-for="ClientInput.FullName" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="ClientInput.Email" class="form-control" />
+                    <label asp-for="ClientInput.Email"></label>
+                    <span asp-validation-for="ClientInput.Email" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="ClientInput.Password" class="form-control" />
+                    <label asp-for="ClientInput.Password"></label>
+                    <span asp-validation-for="ClientInput.Password" class="text-danger"></span>
+                </div>
+
+                <!-- Client Specific Details -->
+                <h3 class="mt-4 mb-3">Client Profile</h3>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="ClientInput.Document" class="form-control" />
+                    <label asp-for="ClientInput.Document"></label>
+                    <span asp-validation-for="ClientInput.Document" class="text-danger"></span>
+                </div>
+                
+                <div class="form-floating mb-3">
+                    <input asp-for="ClientInput.Phone" class="form-control" />
+                    <label asp-for="ClientInput.Phone"></label>
+                    <span asp-validation-for="ClientInput.Phone" class="text-danger"></span>
+                </div>
+                
+                <div class="form-floating mb-3">
+                    <input asp-for="ClientInput.Address" class="form-control" />
+                    <label asp-for="ClientInput.Address"></label>
+                    <span asp-validation-for="ClientInput.Address" class="text-danger"></span>
+                </div>
+                
+                <div class="form-floating mb-3">
+                    <input asp-for="ClientInput.Age" class="form-control" />
+                    <label asp-for="ClientInput.Age"></label>
+                    <span asp-validation-for="ClientInput.Age" class="text-danger"></span>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg">Register Client</button>
+                    <a asp-page="Index" class="btn btn-secondary btn-lg">Back to List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

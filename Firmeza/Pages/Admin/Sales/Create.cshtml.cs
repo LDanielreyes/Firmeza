@@ -5,45 +5,49 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
+
 namespace Firmeza.Pages.Admin.Sales
 {
     [Authorize(Roles = "Administrador")]
     public class CreateModel : PageModel
     {
         private readonly ApplicationDbContext _context;
+        private const decimal IVARate = 0.19m;
 
         public CreateModel(ApplicationDbContext context)
         {
             _context = context;
         }
-
-        // --- View Model for Line Items ---
-        public class SaleLineInput
+        
+        // --- Simplified Input Model for a Single Line Item ---
+        public class SingleSaleInput
         {
+            [Required]
+            [Display(Name = "Product")]
             public int ProductId { get; set; }
+            
+            [Required]
+            [Range(1, 1000)]
             public int Quantity { get; set; }
-            public decimal Price { get; set; }
         }
 
-        // --- Bind Properties for Form Submission ---
-        
         [BindProperty]
-        public int ClientId { get; set; }
+        [Display(Name = "Client Full Name")]
+        [Required(ErrorMessage = "Client selection is mandatory.")]
+        public string ClientFullName { get; set; } = string.Empty; 
 
         [BindProperty]
-        public List<SaleLineInput> SubmittedItems { get; set; } = new List<SaleLineInput>();
+        public SingleSaleInput Item { get; set; } = new SingleSaleInput();
         
-        // --- Data for View ---
-
         public SelectList ClientOptions { get; set; } = default!;
-        public List<Product> AvailableProducts { get; set; } = new List<Product>();
+        public SelectList ProductOptions { get; set; } = default!;
 
-        // --- Handlers ---
-
-        public async Task OnGetAsync()
-        {
-            await LoadDataAsync();
-        }
+        public async Task OnGetAsync() => await LoadDataAsync();
 
         private async Task LoadDataAsync()
         {
@@ -52,79 +56,77 @@ namespace Firmeza.Pages.Admin.Sales
                 nameof(Client.FullName), 
                 nameof(Client.FullName));
             
-            // Load products with sufficient stock
-            AvailableProducts = await _context.Products
-                .Where(p => p.Stock > 0)
-                .ToListAsync();
+            ProductOptions = new SelectList(
+                await _context.Products.Where(p => p.Stock > 0).ToListAsync(),
+                nameof(Product.Id),
+                nameof(Product.Name)
+            );
         }
         
         public async Task<IActionResult> OnPostAsync()
         {
             await LoadDataAsync();
 
-            if (ClientId == 0)
-            {
-                ModelState.AddModelError(string.Empty, "Client selection is mandatory.");
-            }
-
-            if (!SubmittedItems.Any(i => i.Quantity > 0))
-            {
-                ModelState.AddModelError(string.Empty, "The receipt must include at least one item.");
-            }
-            
             if (!ModelState.IsValid) return Page();
 
-            // --- Calculation & Validation ---
-            decimal grossTotal = 0;
-            decimal ivaTotal = 0;
-            var lineItems = new List<Sale>();
+            // 1. BUSCAR CLIENTE por FullName
+            var client = await _context.Users
+                .OfType<Data.Entities.Client>()
+                .FirstOrDefaultAsync(c => c.FullName == ClientFullName);
             
-            foreach (var item in SubmittedItems.Where(i => i.Quantity > 0))
+            if (client == null)
             {
-                var product = await _context.Products.FindAsync(item.ProductId);
-
-                if (product == null || product.Stock < item.Quantity)
-                {
-                    ModelState.AddModelError(string.Empty, $"Stock error for Product ID {item.ProductId}. Please re-check quantities.");
-                    return Page();
-                }
-                
-                // Assuming IVA is 19% (example rate)
-                const decimal ivaRate = 0.19m; 
-                decimal netTotal = item.Quantity * product.Price;
-                decimal itemIva = netTotal * ivaRate;
-                decimal itemGross = netTotal + itemIva;
-
-                grossTotal += itemGross;
-                ivaTotal += itemIva;
-
-                lineItems.Add(new Sale
-                {
-                    ProductId = item.ProductId,
-                    Quantity = item.Quantity,
-                    PricePerUnit = product.Price,
-                    NetTotal = netTotal 
-                });
-                
-                // Decrease product stock
-                product.Stock -= item.Quantity;
-                _context.Entry(product).State = EntityState.Modified;
+                ModelState.AddModelError(nameof(ClientFullName), "Client not found with the provided name.");
+                return Page();
             }
 
-            // --- Create Receipt ---
+            // 2. Validar y Obtener Producto
+            var product = await _context.Products.FindAsync(Item.ProductId);
+
+            if (product == null)
+            {
+                ModelState.AddModelError(nameof(Item.ProductId), "Invalid product selected.");
+                return Page();
+            }
+
+            if (product.Stock < Item.Quantity)
+            {
+                ModelState.AddModelError(nameof(Item.Quantity), $"Insufficient stock. Available: {product.Stock}");
+                return Page();
+            }
+            
+            // 3. Cálculo de Totales
+            decimal netTotal = Item.Quantity * product.Price;
+            decimal ivaTotal = netTotal * IVARate;
+            decimal grossTotal = netTotal + ivaTotal;
+            
+            var saleLine = new Sale() 
+            {
+                ProductId = Item.ProductId, // Sourced from the input model
+                Quantity = Item.Quantity, // Sourced from the input model
+                PricePerUnit = product.Price, // Sourced from the DB product price
+                NetTotal = netTotal 
+            };
+            
+            // 5. Crear Recibo
             var newReceipt = new Receipt
             {
-                ClientId = ClientId,
+                ClientId = client.Id, 
                 ReceiptDate = DateTime.UtcNow,
                 GrossTotal = grossTotal,
                 IvaTotal = ivaTotal,
-                SaleLines = lineItems
+                SaleLines = new List<Sale> { saleLine }
             };
 
+            // 6. Actualizar Stock
+            product.Stock -= Item.Quantity;
+            _context.Entry(product).State = EntityState.Modified;
+
+            // 7. Guardar en Base de Datos
             _context.Receipts.Add(newReceipt);
             await _context.SaveChangesAsync();
 
             return RedirectToPage("./Details", new { id = newReceipt.Id });
         }
     }
-}   
+}

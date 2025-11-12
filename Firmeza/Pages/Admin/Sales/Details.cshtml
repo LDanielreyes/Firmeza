@@ -14,7 +14,7 @@
             <h3>Receipt Information</h3>
             <dl class="row">
                 <dt class="col-sm-4">Client:</dt>
-                <dd class="col-sm-8">@Model.Receipt.Client.FullName (@Model.Receipt.Client.Email)</dd>
+                <dd class="col-sm-8">@Model.Receipt.Client.Id (@Model.Receipt.Client.Email)</dd>
                 
                 <dt class="col-sm-4">Date:</dt>
                 <dd class="col-sm-8">@Html.DisplayFor(model => model.Receipt.ReceiptDate)</dd>
@@ -61,7 +61,14 @@
     </table>
 
     <div class="mt-4">
-        <a asp-page="./Edit" asp-route-id="@Model.Receipt.Id" class="btn btn-info">Edit Header</a>
-        <a asp-page="./Index" class="btn btn-secondary">Back to List</a>
+        @* INSERCIÓN DEL BOTÓN DE DESCARGA PDF *@
+        <a asp-page-handler="GeneratePdf" 
+           asp-route-id="@Model.Receipt.Id" 
+           class="btn btn-danger btn-lg">
+            <i class="fas fa-file-pdf"></i> Download Receipt PDF
+        </a>
+        
+        <a asp-page="./Edit" asp-route-id="@Model.Receipt.Id" class="btn btn-info btn-lg">Edit Header</a>
+        <a asp-page="./Index" class="btn btn-secondary btn-lg">Back to List</a>
     </div>
 </div>

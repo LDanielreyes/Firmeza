@@ -2,6 +2,9 @@ using Firmeza.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Firmeza.Models; 
+using Firmeza.Services; // <-- NUEVA CONFIGURACIÓN: Necesario para IShoppingCartService
+using QuestPDF.Infrastructure; // <-- NUEVA CONFIGURACIÓN: Necesario para QuestPDF.Settings
+using Firmeza.Data.Entities; // Necesario para la entidad Client (aunque Person ya está allí)
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +28,25 @@ builder.Services.AddIdentity<Person, IdentityRole<int>>(options =>
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddRoleManager<RoleManager<IdentityRole<int>>>() 
     .AddDefaultTokenProviders();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); 
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true; // Hace que la sesión funcione antes del consentimiento de GDPR
+});
+
+// 2. Configurar Acceso a HTTP Context (Necesario para IShoppingCartService)
+builder.Services.AddHttpContextAccessor();
+
+// 3. Registrar el Servicio de Carrito de Compras
+//builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
+
+// 4. Configurar QuestPDF (Soluciona el error de licencia)
+QuestPDF.Settings.License = LicenseType.Community;
+
+// ---------------------------------------------------
+
 
 builder.Services.AddAuthorization(options =>
 {
@@ -73,9 +95,13 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseSession(); 
+
+
 app.UseAuthentication(); 
 app.UseAuthorization();
 
 app.MapRazorPages();
 
 app.Run();
+

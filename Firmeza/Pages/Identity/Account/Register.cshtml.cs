@@ -3,15 +3,16 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
-using Firmeza.Models;
+using Firmeza.Models; 
 
-namespace Firmeza.Identity.Pages.Account
+namespace Firmeza.Pages.Identity.Account
 {
-    // Asegúrate de inyectar las dependencias correctas
     public class RegisterModel : PageModel
     {
         private readonly UserManager<Person> _userManager;
         private readonly SignInManager<Person> _signInManager;
+        
+        private const string ClientRole = "Cliente";
 
         public RegisterModel(
             UserManager<Person> userManager,
@@ -22,30 +23,43 @@ namespace Firmeza.Identity.Pages.Account
         }
 
         [BindProperty]
-        public InputModel Input { get; set; }
+        public InputModel Input { get; set; } = new InputModel();
 
-        public string ReturnUrl { get; set; }
+        public string? ReturnUrl { get; set; }
 
         public class InputModel
         {
             [Required]
             [EmailAddress]
-            public string Email { get; set; }
+            public string Email { get; set; } = string.Empty;
 
             [Required]
             [DataType(DataType.Password)]
-            public string Password { get; set; }
+            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at most {1} characters long.", MinimumLength = 6)]
+            public string Password { get; set; } = string.Empty;
             
             [Required]
-            public string FullName { get; set; }
+            [Display(Name = "Full Name")]
+            public string FullName { get; set; } = string.Empty;
+
+            
+            [Display(Name = "Document ID")]
+            public string Document { get; set; } = string.Empty;
+            
+            public string Address { get; set; } = string.Empty;
+
+            [Display(Name = "Phone")]
+            public string Phone { get; set; } = string.Empty;
+            
+            public byte Age { get; set; } = 18; 
         }
 
-        public void OnGet(string returnUrl = null)
+        public void OnGet(string? returnUrl = null)
         {
             ReturnUrl = returnUrl;
         }
 
-        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+        public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
 
@@ -56,14 +70,19 @@ namespace Firmeza.Identity.Pages.Account
                     UserName = Input.Email, 
                     Email = Input.Email, 
                     FullName = Input.FullName,
-                    RegisterDate = DateTime.Now
+                    EmailConfirmed = true,
+                    RegisterDate = DateTime.UtcNow, 
+                    Phone = Input.Phone, 
+                    Document = Input.Document,
+                    Age = Input.Age,
+                    Address = Input.Address,
                 };
                 
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(user, "Cliente");
+                    await _userManager.AddToRoleAsync(user, ClientRole);
                     
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return LocalRedirect(returnUrl);

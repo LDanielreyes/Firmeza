@@ -1,9 +1,8 @@
 @page
-@using System.Text.Json
 @model Firmeza.Pages.Admin.Sales.CreateModel
 
 @{
-    ViewData["Title"] = "Register New Receipt";
+    ViewData["Title"] = "Register New Receipt (Simple)";
 }
 
 <div class="container mt-4">
@@ -11,49 +10,41 @@
     
     <hr />
     <div class="row">
-        <div class="col-lg-10">
-            <form method="post" id="receiptForm">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="col-lg-8">
+            <form method="post">
+                <div asp-validation-summary="All" class="text-danger"></div>
                 
-                <h3 class="mt-4">Client Information</h3>
+                <h3 class="mt-4">1. Client Selection</h3>
+                
                 <div class="form-floating mb-3">
-                    <select asp-for="ClientId" asp-items="Model.ClientOptions" class="form-select">
+                    <select asp-for="ClientFullName" asp-items="Model.ClientOptions" class="form-select">
                         <option value="">-- Select Client --</option>
                     </select>
-                    <label asp-for="ClientId">Select Client</label>
-                    <span asp-validation-for="ClientId" class="text-danger"></span>
+                    <label asp-for="ClientFullName"></label>
+                    <span asp-validation-for="ClientFullName" class="text-danger"></span>
                 </div>
 
-                <h3 class="mt-4">Products</h3>
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="lineItemsTable">
-                        <thead>
-                            <tr>
-                                <th>Product</th>
-                                <th>Unit Price</th>
-                                <th>Stock</th>
-                                <th>Quantity</th>
-                                <th>Subtotal</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            </tbody>
-                        <tfoot>
-                            <tr class="table-light">
-                                <td colspan="3" class="text-end fw-bold">IVA Total:</td>
-                                <td colspan="2" id="ivaTotalDisplay">0.00</td>
-                            </tr>
-                            <tr class="table-primary">
-                                <td colspan="3" class="text-end fw-bold">Gross Total:</td>
-                                <td colspan="2" id="grossTotalDisplay">0.00</td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-
-                <button type="button" class="btn btn-sm btn-outline-success mb-4" id="addProductBtn">Add Product Line</button>
+                <h3 class="mt-5">2. Single Product Sale</h3>
                 
+                <div class="row">
+                    <div class="col-md-7">
+                        <div class="form-floating mb-3">
+                            <select asp-for="Item.ProductId" asp-items="Model.ProductOptions" class="form-select">
+                                <option value="">-- Select Product --</option>
+                            </select>
+                            <label asp-for="Item.ProductId">Product</label>
+                            <span asp-validation-for="Item.ProductId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="form-floating mb-3">
+                            <input asp-for="Item.Quantity" type="number" min="1" class="form-control" />
+                            <label asp-for="Item.Quantity">Quantity</label>
+                            <span asp-validation-for="Item.Quantity" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="mt-5">
                     <button type="submit" class="btn btn-success btn-lg">Register Receipt</button>
                     <a asp-page="Index" class="btn btn-secondary btn-lg">Cancel</a>
@@ -65,131 +56,4 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    
-    <script>
-        // Data containing product inventory for client-side calculations
-        const productData = @Html.Raw(JsonSerializer.Serialize(Model.AvailableProducts.Select(p => new { p.Id, p.Name, p.Price, p.Stock })));
-        
-        let lineIndex = 0;
-        const IVARate = 0.19; // Must match the C# constant
-
-        function addProductLine(product = null) {
-            const tableBody = document.querySelector('#lineItemsTable tbody');
-            const row = tableBody.insertRow();
-            
-            // 1. Product Select
-            const productCell = row.insertCell();
-            const select = document.createElement('select');
-            select.name = `SubmittedItems[${lineIndex}].ProductId`;
-            select.className = 'form-select form-select-sm productIdSelect';
-            select.required = true;
-            
-            let defaultOption = new Option('-- Select Product --', '');
-            select.add(defaultOption);
-            
-            productData.forEach(p => {
-                let option = new Option(`${p.Name} (Stock: ${p.Stock})`, p.Id);
-                select.add(option);
-            });
-            productCell.appendChild(select);
-            
-            // 2. Unit Price (Read-only input)
-            const priceCell = row.insertCell();
-            priceCell.className = 'text-end';
-            priceCell.innerHTML = `<span class="unitPriceDisplay">0.00</span>`;
-            
-            const hiddenPrice = document.createElement('input');
-            hiddenPrice.type = 'hidden';
-            hiddenPrice.name = `SubmittedItems[${lineIndex}].Price`;
-            hiddenPrice.className = 'linePriceValue';
-            hiddenPrice.value = 0;
-            priceCell.appendChild(hiddenPrice);
-
-            // 3. Stock Cell (Read-only text)
-            const stockCell = row.insertCell();
-            stockCell.className = 'text-center';
-            stockCell.innerHTML = `<span class="stockDisplay">0</span>`;
-            
-            // 4. Quantity Input
-            const quantityCell = row.insertCell();
-            const quantityInput = document.createElement('input');
-            quantityInput.type = 'number';
-            quantityInput.name = `SubmittedItems[${lineIndex}].Quantity`;
-            quantityInput.className = 'form-control form-control-sm lineQuantity';
-            quantityInput.value = 1;
-            quantityInput.min = 1;
-            quantityInput.max = 0; // Will be set dynamically
-            quantityInput.required = true;
-            quantityCell.appendChild(quantityInput);
-            
-            // 5. Subtotal Display
-            const subtotalCell = row.insertCell();
-            subtotalCell.className = 'text-end fw-bold lineSubtotal';
-            subtotalCell.textContent = '0.00';
-            
-            // 6. Delete Button
-            const deleteCell = row.insertCell();
-            deleteCell.innerHTML = `<button type="button" class="btn btn-danger btn-sm delete-line">X</button>`;
-            
-            // --- Event Listeners ---
-            
-            select.addEventListener('change', () => {
-                const productId = parseInt(select.value);
-                const product = productData.find(p => p.Id === productId);
-                
-                if (product) {
-                    row.querySelector('.unitPriceDisplay').textContent = product.Price.toFixed(2);
-                    row.querySelector('.linePriceValue').value = product.Price;
-                    row.querySelector('.stockDisplay').textContent = product.Stock;
-                    
-                    const qtyInput = row.querySelector('.lineQuantity');
-                    qtyInput.max = product.Stock;
-                    if (parseInt(qtyInput.value) > product.Stock) {
-                        qtyInput.value = product.Stock;
-                    }
-                } else {
-                    row.querySelector('.unitPriceDisplay').textContent = '0.00';
-                    row.querySelector('.linePriceValue').value = 0;
-                    row.querySelector('.stockDisplay').textContent = '0';
-                    row.querySelector('.lineQuantity').max = 0;
-                }
-                calculateTotals();
-            });
-
-            quantityInput.addEventListener('input', calculateTotals);
-            row.querySelector('.delete-line').addEventListener('click', () => {
-                row.remove();
-                calculateTotals();
-            });
-            
-            lineIndex++;
-            calculateTotals();
-        }
-
-        function calculateTotals() {
-            let runningNetTotal = 0;
-            const rows = document.querySelectorAll('#lineItemsTable tbody tr');
-            
-            rows.forEach(row => {
-                const price = parseFloat(row.querySelector('.linePriceValue').value || 0);
-                const quantity = parseInt(row.querySelector('.lineQuantity').value || 0);
-                
-                const netTotal = price * quantity;
-                runningNetTotal += netTotal;
-                
-                row.querySelector('.lineSubtotal').textContent = netTotal.toFixed(2);
-            });
-            
-            const ivaTotal = runningNetTotal * IVARate;
-            const grossTotal = runningNetTotal + ivaTotal;
-
-            document.getElementById('ivaTotalDisplay').textContent = ivaTotal.toFixed(2);
-            document.getElementById('grossTotalDisplay').textContent = grossTotal.toFixed(2);
-        }
-
-        document.getElementById('addProductBtn').addEventListener('click', () => addProductLine());
-
-        // Initialize with one line
-        addProductLine();
-    </script>
 }

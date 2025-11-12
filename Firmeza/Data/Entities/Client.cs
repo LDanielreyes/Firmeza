@@ -15,7 +15,7 @@ public class Client : Person
     public string Address { get; set; } = string.Empty;
 
     public byte Age { get; set; }
-    public DateTime RegisterDate { get; set; } = DateTime.Now;
+    public DateTime RegisterDate { get; set; } = DateTime.UtcNow;
     
     public ICollection<Sale>? Sales { get; set; }
     public ICollection<Receipt> Receipts { get; set; } = new List<Receipt>();
