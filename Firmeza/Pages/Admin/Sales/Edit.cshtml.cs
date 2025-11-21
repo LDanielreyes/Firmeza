@@ -37,9 +37,9 @@ namespace Firmeza.Pages.Admin.Sales
 
             // Cargar clientes para el selector
             ClientOptions = new SelectList(
-                await _context.Users.OfType<Client>().ToListAsync(), 
-                nameof(Client.Id), 
-                nameof(Client.FullName));
+                await _context.Users.OfType<Data.Entities.Client>().ToListAsync(), 
+                nameof(Data.Entities.Client.Id), 
+                nameof(Data.Entities.Client.FullName));
 
             return Page();
         }
@@ -52,9 +52,9 @@ namespace Firmeza.Pages.Admin.Sales
             if (!ModelState.IsValid)
             {
                 ClientOptions = new SelectList(
-                    await _context.Users.OfType<Client>().ToListAsync(), 
-                    nameof(Client.Id), 
-                    nameof(Client.FullName));
+                    await _context.Users.OfType<Data.Entities.Client>().ToListAsync(), 
+                    nameof(Data.Entities.Client.Id), 
+                    nameof(Data.Entities.Client.FullName));
                 return Page();
             }
 

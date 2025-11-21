@@ -77,7 +77,7 @@ namespace Firmeza.Pages.Admin.Clients
                 return Page();
             }
             
-            var newClient = new Client
+            var newClient = new Data.Entities.Client
             {
                 UserName = ClientInput.Email,
                 Email = ClientInput.Email,

@@ -1,0 +1,13 @@
+version: '3.4'
+
+services:
+  firmezaapi:
+    image: firmezaapi
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5273:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__PostgreSQLConnection=${POSTGRES_CONNECTION_STRING}

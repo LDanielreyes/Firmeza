@@ -24,7 +24,7 @@ namespace Firmeza.Pages.Admin.Clients
         }
 
         [BindProperty]
-        public Client Client { get; set; } = default!;
+        public Data.Entities.Client Client { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -35,7 +35,7 @@ namespace Firmeza.Pages.Admin.Clients
 
             // Fetch the user, explicitly casting to Client
             var client = await _context.Users
-                .OfType<Client>()
+                .OfType<Data.Entities.Client>()
                 .FirstOrDefaultAsync(m => m.Id == id);
             
             if (client == null)

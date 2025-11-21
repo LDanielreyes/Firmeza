@@ -24,8 +24,9 @@
              <div class="card bg-light shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title text-uppercase">Total Amount</h5>
-                    <div class="display-3 text-success">@Model.Receipt.GrossTotal.ToString("C")</div>
-                    <div class="small">IVA: @Model.Receipt.IvaTotal.ToString("C")</div>
+                    {{ CAMBIO 1 y 2 }}
+                    <div class="display-3 text-success">@Model.Receipt.GrossTotal.ToString("C", new System.Globalization.CultureInfo("en-US"))</div>
+                    <div class="small">IVA: @Model.Receipt.IvaTotal.ToString("C", new System.Globalization.CultureInfo("en-US"))</div>
                 </div>
             </div>
         </div>
@@ -47,15 +48,17 @@
             <tr>
                 <td>@line.Product.Name</td>
                 <td>@line.Quantity</td>
-                <td>@line.PricePerUnit.ToString("C")</td>
-                <td>@line.NetTotal.ToString("C")</td>
+                {{ CAMBIO 3 y 4 }}
+                <td>@line.PricePerUnit.ToString("C", new System.Globalization.CultureInfo("en-US"))</td>
+                <td>@line.NetTotal.ToString("C", new System.Globalization.CultureInfo("en-US"))</td>
             </tr>
         }
         </tbody>
         <tfoot>
             <tr>
                 <td colspan="3" class="text-end fw-bold">Gross Total:</td>
-                <td class="fw-bold">@Model.Receipt.GrossTotal.ToString("C")</td>
+                {{ CAMBIO 5 }}
+                <td class="fw-bold">@Model.Receipt.GrossTotal.ToString("C", new System.Globalization.CultureInfo("en-US"))</td>
             </tr>
         </tfoot>
     </table>

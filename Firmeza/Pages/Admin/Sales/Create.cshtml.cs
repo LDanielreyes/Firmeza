@@ -53,8 +53,8 @@ namespace Firmeza.Pages.Admin.Sales
         {
             ClientOptions = new SelectList(
                 await _context.Users.OfType<Data.Entities.Client>().ToListAsync(), 
-                nameof(Client.FullName), 
-                nameof(Client.FullName));
+                nameof(Data.Entities.Client.FullName), 
+                nameof(Data.Entities.Client.FullName));
             
             ProductOptions = new SelectList(
                 await _context.Products.Where(p => p.Stock > 0).ToListAsync(),

@@ -30,7 +30,7 @@ namespace Firmeza.Pages.Admin.Dashboard
             TotalProducts = await _context.Products.CountAsync();
 
             // 2. Total Clients (Users of type Client)
-            TotalClients = await _context.Users.OfType<Client>().CountAsync();
+            TotalClients = await _context.Users.OfType<Data.Entities.Client>().CountAsync();
 
             // 3. Total Sales and Revenue
             var salesData = await _context.Sales

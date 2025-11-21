@@ -20,7 +20,7 @@ namespace Firmeza.Pages.Admin.Clients
         }
 
         [BindProperty]
-        public Client Client { get; set; } = default!;
+        public Data.Entities.Client Client { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -30,7 +30,7 @@ namespace Firmeza.Pages.Admin.Clients
             }
 
             var client = await _context.Users
-                .OfType<Client>()
+                .OfType<Data.Entities.Client>()
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (client == null)
@@ -85,7 +85,7 @@ namespace Firmeza.Pages.Admin.Clients
 
         private bool ClientExists(int id)
         {
-            return _context.Users.OfType<Client>().Any(e => e.Id == id);
+            return _context.Users.OfType<Data.Entities.Client>().Any(e => e.Id == id);
         }
     }
 }

@@ -20,13 +20,13 @@ namespace Firmeza.Pages.Admin.Clients
         }
 
         // List will only contain Client objects due to the .OfType<Client>() filter
-        public IList<Client> ClientList { get; set; } = default!;
+        public IList<Data.Entities.Client> ClientList { get; set; } = default!;
 
         public async Task OnGetAsync()
         {
             // Fetch all users that are explicitly Clients
             ClientList = await _context.Users
-                .OfType<Client>()
+                .OfType<Data.Entities.Client>()
                 .ToListAsync();
         }
     }

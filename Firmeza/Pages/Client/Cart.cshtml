@@ -1,0 +1,98 @@
+@page
+@model Firmeza.Pages.Client.CartModel
+@{
+    ViewData["Title"] = "Shopping Cart";
+}
+
+<div class="container mt-5">
+    <h1>Your Shopping Cart</h1>
+    <hr />
+
+    @if (!Model.CartItems.Any())
+    {
+        <div class="alert alert-info mt-4" role="alert">
+            Your cart is empty. <a asp-page="/Client/Catalog">Browse products here.</a>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Product</th>
+                        <th class="text-center">Price</th>
+                        <th class="text-center">Quantity</th>
+                        <th class="text-end">Subtotal (Net)</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.CartItems)
+                    {
+                        <tr>
+                            <td>
+                                <h5>@item.Product!.Name</h5>
+                                <span class="text-danger small">
+                                    @if (item.Product.Stock < item.Quantity)
+                                    {
+                                        <span>Out of stock (Only @item.Product.Stock available)</span>
+                                    }
+                                </span>
+                            </td>
+                            <td class="text-center">@item.Product.Price.ToString("C", new System.Globalization.CultureInfo("en-US"))</td>
+                            <td class="text-center">
+                                <form method="post" asp-page-handler="Update" class="d-flex justify-content-center">
+                                    <input type="hidden" name="productId" value="@item.ProductId" />
+                                    <input type="number" name="quantity" value="@item.Quantity" 
+                                           min="0" max="@item.Product.Stock" class="form-control form-control-sm" style="width: 80px;" 
+                                           onchange="this.form.submit()" />
+                                </form>
+                            </td>
+                            <td class="text-end fw-bold">@item.SubTotal.ToString("C", new System.Globalization.CultureInfo("en-US"))</td>
+                            <td>
+                                <form method="post" asp-page-handler="Remove">
+                                    <input type="hidden" name="productId" value="@item.ProductId" />
+                                    <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <form method="post" asp-page-handler="Clear">
+                    <button type="submit" class="btn btn-outline-danger">Clear Cart</button>
+                </form>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h4 class="card-title">Order Summary</h4>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between">
+                                Net Total:
+                                <span>@Model.TotalNet.ToString("C", new System.Globalization.CultureInfo("en-US"))</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between text-muted small">
+                                IVA (19%):
+                                <span>@Model.Iva.ToString("C", new System.Globalization.CultureInfo("en-US"))</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between fw-bold text-primary">
+                                Gross Total:
+                                <span>@Model.TotalGross.ToString("C", new System.Globalization.CultureInfo("en-US"))</span>
+                            </li>
+                        </ul>
+                        
+                        <a asp-page="/Client/Checkout" class="btn btn-success btn-lg mt-3 w-100">
+                            Proceed to Checkout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

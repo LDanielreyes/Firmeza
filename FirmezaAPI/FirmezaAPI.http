@@ -1,0 +1,6 @@
+@FirmezaAPI_HostAddress = http://localhost:5273
+
+GET {{FirmezaAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

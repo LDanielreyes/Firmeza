@@ -3,12 +3,16 @@ using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using System.Linq;
+using System.Globalization; // Necesario para CultureInfo
 
 namespace Firmeza.Services
 {
     // IDocument es la interfaz principal para la generación de PDFs
     public class ReceiptDocument : IDocument
     {
+        private readonly CultureInfo UsdCulture = new CultureInfo("en-US"); // Define la cultura para el símbolo $
+        private const string CurrencyFormat = "C";
+
         public Receipt Receipt { get; }
         public ReceiptDocument(Receipt receipt)
         {
@@ -86,8 +90,10 @@ namespace Firmeza.Services
                     {
                         table.Cell().PaddingVertical(3).Text(line.Product.Name);
                         table.Cell().AlignRight().Text(line.Quantity.ToString());
-                        table.Cell().AlignRight().Text(line.PricePerUnit.ToString("C"));
-                        table.Cell().AlignRight().Text(line.NetTotal.ToString("C"));
+                        // CAMBIO: Forzar formato USD ($)
+                        table.Cell().AlignRight().Text(line.PricePerUnit.ToString(CurrencyFormat, UsdCulture));
+                        // CAMBIO: Forzar formato USD ($)
+                        table.Cell().AlignRight().Text(line.NetTotal.ToString(CurrencyFormat, UsdCulture));
                     }
                 });
 
@@ -96,10 +102,13 @@ namespace Firmeza.Services
 
                 column.Item().PaddingTop(15).AlignRight().Column(totals =>
                 {
-                    totals.Item().Text($"Subtotal (Net): {netTotal.ToString("C")}").FontSize(11);
-                    totals.Item().Text($"IVA Total: {Receipt.IvaTotal.ToString("C")}").FontSize(11);
+                    // CAMBIO: Forzar formato USD ($)
+                    totals.Item().Text($"Subtotal (Net): {netTotal.ToString(CurrencyFormat, UsdCulture)}").FontSize(11);
+                    // CAMBIO: Forzar formato USD ($)
+                    totals.Item().Text($"IVA Total: {Receipt.IvaTotal.ToString(CurrencyFormat, UsdCulture)}").FontSize(11);
                     
-                    totals.Item().PaddingTop(5).Text($"GROSS TOTAL: {Receipt.GrossTotal.ToString("C")}")
+                    // CAMBIO: Forzar formato USD ($)
+                    totals.Item().PaddingTop(5).Text($"GROSS TOTAL: {Receipt.GrossTotal.ToString(CurrencyFormat, UsdCulture)}")
                         .FontSize(14).SemiBold().FontColor(Colors.Green.Darken1).BackgroundColor(Colors.Green.Lighten5).BackgroundColor(5);
                 });
             });

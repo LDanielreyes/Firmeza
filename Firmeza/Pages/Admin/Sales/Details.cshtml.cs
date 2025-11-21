@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Firmeza.Pages.Admin.Sales
 {
-    [Authorize(Roles = "Administrador")]
+    // [Authorize(Roles = "Administrador")]
     public class DetailsModel : PageModel
     {
         private readonly ApplicationDbContext _context;

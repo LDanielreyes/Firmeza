@@ -65,7 +65,7 @@ namespace Firmeza.Pages.Identity.Account
 
             if (ModelState.IsValid)
             {
-                var user = new Client 
+                var user = new Data.Entities.Client() 
                 { 
                     UserName = Input.Email, 
                     Email = Input.Email, 
