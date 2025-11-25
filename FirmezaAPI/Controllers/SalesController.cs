@@ -24,15 +24,29 @@ namespace FirmezaAPI.Controllers
 
         // GET: api/Sales
         [HttpGet]
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<ReceiptDto>>> GetSales()
         {
-            var receipts = await _context.Receipts
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            var userRoleClaim = User.FindFirst(System.Security.Claims.ClaimTypes.Role);
+
+            if (userIdClaim == null) return Unauthorized();
+
+            var query = _context.Receipts
                 .Include(r => r.Client)
                 .Include(r => r.SaleLines)
                 .ThenInclude(s => s.Product)
                 .OrderByDescending(r => r.ReceiptDate)
-                .ToListAsync();
+                .AsQueryable();
+
+            if (userRoleClaim?.Value != "Admin")
+            {
+                if (int.TryParse(userIdClaim.Value, out int userId))
+                {
+                    query = query.Where(r => r.ClientId == userId);
+                }
+            }
+
+            var receipts = await query.ToListAsync();
 
             return Ok(_mapper.Map<IEnumerable<ReceiptDto>>(receipts));
         }
