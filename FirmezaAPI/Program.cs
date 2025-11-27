@@ -73,13 +73,17 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<FirmezaAPI.Services.IEmailService, FirmezaAPI.Services.GmailEmailService>();
+builder.Services.AddScoped<FirmezaAPI.Services.ProductImportService>();
+builder.Services.AddScoped<FirmezaAPI.Services.ProductExportService>();
+builder.Services.AddScoped<FirmezaAPI.Services.ClientImportService>();
+builder.Services.AddScoped<FirmezaAPI.Services.ClientExportService>();
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngularApp",
         builder =>
         {
-            builder.WithOrigins("http://localhost:4200")
+            builder.AllowAnyOrigin()
                    .AllowAnyHeader()
                    .AllowAnyMethod();
         });

@@ -2,6 +2,7 @@ using AutoMapper;
 using Firmeza.Data;
 using Firmeza.Data.Entities;
 using FirmezaAPI.DTOs;
+using FirmezaAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,11 +16,16 @@ namespace FirmezaAPI.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
+        private readonly ClientImportService _importService;
+        private readonly ClientExportService _exportService;
 
-        public ClientsController(ApplicationDbContext context, IMapper mapper)
+        public ClientsController(ApplicationDbContext context, IMapper mapper,
+            ClientImportService importService, ClientExportService exportService)
         {
             _context = context;
             _mapper = mapper;
+            _importService = importService;
+            _exportService = exportService;
         }
 
         // GET: api/Clients
@@ -112,6 +118,31 @@ namespace FirmezaAPI.Controllers
         private bool ClientExists(int id)
         {
             return _context.People.OfType<Client>().Any(e => e.Id == id);
+        }
+
+        [HttpPost("import")]
+        public async Task<ActionResult<ImportResultDto>> ImportClients(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest("No se ha proporcionado ningún archivo.");
+
+            using var stream = file.OpenReadStream();
+            var result = await _importService.ImportFromExcelAsync(stream);
+            return Ok(result);
+        }
+
+        [HttpGet("export/excel")]
+        public async Task<IActionResult> ExportClientsExcel()
+        {
+            var content = await _exportService.ExportToExcelAsync();
+            return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "clientes.xlsx");
+        }
+
+        [HttpGet("export/pdf")]
+        public async Task<IActionResult> ExportClientsPdf()
+        {
+            var content = await _exportService.ExportToPdfAsync();
+            return File(content, "application/pdf", "clientes.pdf");
         }
     }
 }

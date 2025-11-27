@@ -37,8 +37,7 @@ export class LoginComponent {
                 password: this.loginForm.value.password
             }).subscribe({
                 next: () => {
-                    const role = this.authService.getUserRole();
-                    if (role === 'Admin') {
+                    if (this.authService.isAdmin()) {
                         this.router.navigate(['/admin/dashboard']);
                     } else {
                         this.router.navigate(['/landing']);

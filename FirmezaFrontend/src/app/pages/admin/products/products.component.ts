@@ -4,6 +4,8 @@ import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ProductService } from '../../../services/product.service';
 import { AuthService } from '../../../services/auth.service';
+import { ImportModalComponent } from '../../../components/import-modal/import-modal.component';
+import { ImportExportService } from '../../../services/import-export.service';
 
 export interface Product {
     id: number;
@@ -17,7 +19,7 @@ export interface Product {
 @Component({
     selector: 'app-products',
     standalone: true,
-    imports: [CommonModule, RouterLink, FormsModule],
+    imports: [CommonModule, RouterLink, FormsModule, ImportModalComponent],
     templateUrl: './products.component.html',
     styleUrls: ['./products.component.css']
 })
@@ -26,10 +28,13 @@ export class ProductsComponent implements OnInit {
     loading: boolean = true;
     searchTerm: string = '';
 
+    showImportModal = false;
+
     constructor(
         private productService: ProductService,
         private authService: AuthService,
-        private router: Router
+        private router: Router,
+        private importExportService: ImportExportService
     ) { }
 
     ngOnInit() {
@@ -89,5 +94,27 @@ export class ProductsComponent implements OnInit {
 
     logout() {
         this.authService.logout();
+    }
+
+    openImportModal() {
+        this.showImportModal = true;
+    }
+
+    closeImportModal() {
+        this.showImportModal = false;
+    }
+
+    onImported() {
+        this.closeImportModal();
+        this.loadProducts();
+        // Optional: Show success toast
+    }
+
+    exportExcel() {
+        this.importExportService.exportExcel('Products');
+    }
+
+    exportPdf() {
+        this.importExportService.exportPdf('Products');
     }
 }

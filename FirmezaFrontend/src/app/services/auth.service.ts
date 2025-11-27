@@ -67,12 +67,29 @@ export class AuthService {
         return this.userRoleSubject.value;
     }
 
+    isAdmin(): boolean {
+        const role = this.getUserRole();
+        return role === 'Admin' || role === 'Administrador';
+    }
+
     private getRoleFromToken(): string | null {
         const token = this.getToken();
         if (!token) return null;
         try {
             const decoded: any = jwtDecode(token);
-            return decoded.role || decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || null;
+            let role = decoded.role || decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || null;
+
+            // Handle role as array (e.g., ["Administrador", "Admin"])
+            if (Array.isArray(role)) {
+                // Prioritize "Admin" role if it exists in the array
+                if (role.includes('Admin')) {
+                    return 'Admin';
+                }
+                // Otherwise return the first role
+                return role.length > 0 ? role[0] : null;
+            }
+
+            return role;
         } catch (e) {
             return null;
         }

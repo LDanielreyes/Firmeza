@@ -2,6 +2,7 @@ using AutoMapper;
 using Firmeza.Data;
 using Firmeza.Data.Entities;
 using FirmezaAPI.DTOs;
+using FirmezaAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,11 +15,16 @@ namespace FirmezaAPI.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
+        private readonly ProductImportService _importService;
+        private readonly ProductExportService _exportService;
 
-        public ProductsController(ApplicationDbContext context, IMapper mapper)
+        public ProductsController(ApplicationDbContext context, IMapper mapper,
+            ProductImportService importService, ProductExportService exportService)
         {
             _context = context;
             _mapper = mapper;
+            _importService = importService;
+            _exportService = exportService;
         }
 
         // GET: api/Products
@@ -141,6 +147,34 @@ namespace FirmezaAPI.Controllers
         private bool ProductExists(int id)
         {
             return _context.Products.Any(e => e.Id == id);
+        }
+
+        [HttpPost("import")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<ImportResultDto>> ImportProducts(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest("No se ha proporcionado ningún archivo.");
+
+            using var stream = file.OpenReadStream();
+            var result = await _importService.ImportFromExcelAsync(stream);
+            return Ok(result);
+        }
+
+        [HttpGet("export/excel")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ExportProductsExcel()
+        {
+            var content = await _exportService.ExportToExcelAsync();
+            return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "productos.xlsx");
+        }
+
+        [HttpGet("export/pdf")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ExportProductsPdf()
+        {
+            var content = await _exportService.ExportToPdfAsync();
+            return File(content, "application/pdf", "productos.pdf");
         }
     }
 }

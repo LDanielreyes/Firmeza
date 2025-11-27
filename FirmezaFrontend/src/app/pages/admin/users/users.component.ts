@@ -4,6 +4,8 @@ import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../../services/user.service';
 import { AuthService } from '../../../services/auth.service';
+import { ImportModalComponent } from '../../../components/import-modal/import-modal.component';
+import { ImportExportService } from '../../../services/import-export.service';
 
 export interface User {
     id: number;
@@ -16,7 +18,7 @@ export interface User {
 @Component({
     selector: 'app-users',
     standalone: true,
-    imports: [CommonModule, RouterLink, FormsModule],
+    imports: [CommonModule, RouterLink, FormsModule, ImportModalComponent],
     templateUrl: './users.component.html',
     styleUrls: ['./users.component.css']
 })
@@ -25,10 +27,13 @@ export class UsersComponent implements OnInit {
     loading: boolean = true;
     searchTerm: string = '';
 
+    showImportModal = false;
+
     constructor(
         private userService: UserService,
         private authService: AuthService,
-        private router: Router
+        private router: Router,
+        private importExportService: ImportExportService
     ) { }
 
     ngOnInit() {
@@ -76,5 +81,27 @@ export class UsersComponent implements OnInit {
 
     logout() {
         this.authService.logout();
+    }
+
+    openImportModal() {
+        this.showImportModal = true;
+    }
+
+    closeImportModal() {
+        this.showImportModal = false;
+    }
+
+    onImported() {
+        this.closeImportModal();
+        this.loadUsers();
+        // Optional: Show success toast
+    }
+
+    exportExcel() {
+        this.importExportService.exportExcel('Clients');
+    }
+
+    exportPdf() {
+        this.importExportService.exportPdf('Clients');
     }
 }
