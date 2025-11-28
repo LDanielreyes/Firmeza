@@ -6,19 +6,26 @@ import { UserService } from '../../../services/user.service';
 import { AuthService } from '../../../services/auth.service';
 import { ImportModalComponent } from '../../../components/import-modal/import-modal.component';
 import { ImportExportService } from '../../../services/import-export.service';
+import { ToastService } from '../../../services/toast.service';
+import { ToastComponent } from '../../../components/toast/toast.component';
+import { UserModalComponent, UserFormData } from '../../../components/user-modal/user-modal.component';
 
 export interface User {
     id: number;
     email: string;
-    firstName?: string;
-    lastName?: string;
+    fullName: string;
+    phone: string;
+    document: string;
+    address: string;
+    age: number;
+    registerDate: string;
     role?: string;
 }
 
 @Component({
     selector: 'app-users',
     standalone: true,
-    imports: [CommonModule, RouterLink, FormsModule, ImportModalComponent],
+    imports: [CommonModule, RouterLink, FormsModule, ImportModalComponent, ToastComponent, UserModalComponent],
     templateUrl: './users.component.html',
     styleUrls: ['./users.component.css']
 })
@@ -28,12 +35,16 @@ export class UsersComponent implements OnInit {
     searchTerm: string = '';
 
     showImportModal = false;
+    showUserModal = false;
+    selectedUser: UserFormData | null = null;
+    isEditMode = false;
 
     constructor(
         private userService: UserService,
         private authService: AuthService,
         private router: Router,
-        private importExportService: ImportExportService
+        private importExportService: ImportExportService,
+        private toastService: ToastService
     ) { }
 
     ngOnInit() {
@@ -60,8 +71,7 @@ export class UsersComponent implements OnInit {
         }
         return this.users.filter(user =>
             user.email.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-            (user.firstName && user.firstName.toLowerCase().includes(this.searchTerm.toLowerCase())) ||
-            (user.lastName && user.lastName.toLowerCase().includes(this.searchTerm.toLowerCase()))
+            (user.fullName && user.fullName.toLowerCase().includes(this.searchTerm.toLowerCase()))
         );
     }
 
@@ -76,6 +86,45 @@ export class UsersComponent implements OnInit {
                     alert('Failed to delete user');
                 }
             });
+        }
+    }
+
+    openAddUserModal() {
+        this.selectedUser = null;
+        this.isEditMode = false;
+        this.showUserModal = true;
+    }
+
+    editUser(user: User) {
+        this.selectedUser = { ...user };
+        this.isEditMode = true;
+        this.showUserModal = true;
+    }
+
+    closeUserModal() {
+        this.showUserModal = false;
+        this.selectedUser = null;
+    }
+
+    saveUser(userData: UserFormData) {
+        if (this.isEditMode && userData.id) {
+            // Update existing user
+            this.userService.updateUser(userData.id, userData).subscribe({
+                next: () => {
+                    this.loadUsers();
+                    this.toastService.success('User updated successfully!');
+                    this.closeUserModal();
+                },
+                error: (err) => {
+                    console.error('Error updating user:', err);
+                    this.toastService.error('Failed to update user. Please try again.');
+                }
+            });
+        } else {
+            // For creating users, we would typically use Auth/Register endpoint
+            // This is a simplified approach - adjust based on your backend requirements
+            this.toastService.info('Please use the Auth/Register endpoint to create new users');
+            this.closeUserModal();
         }
     }
 

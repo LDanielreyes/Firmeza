@@ -38,7 +38,7 @@ namespace FirmezaAPI.Controllers
                 .OrderByDescending(r => r.ReceiptDate)
                 .AsQueryable();
 
-            if (userRoleClaim?.Value != "Admin")
+            if (!User.IsInRole("Admin"))
             {
                 if (int.TryParse(userIdClaim.Value, out int userId))
                 {

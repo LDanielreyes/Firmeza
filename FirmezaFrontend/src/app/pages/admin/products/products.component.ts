@@ -6,20 +6,25 @@ import { ProductService } from '../../../services/product.service';
 import { AuthService } from '../../../services/auth.service';
 import { ImportModalComponent } from '../../../components/import-modal/import-modal.component';
 import { ImportExportService } from '../../../services/import-export.service';
+import { ToastService } from '../../../services/toast.service';
+import { ToastComponent } from '../../../components/toast/toast.component';
+import { ProductModalComponent, ProductFormData } from '../../../components/product-modal/product-modal.component';
 
 export interface Product {
     id: number;
     name: string;
     description?: string;
+    type?: string;
     price: number;
     stock: number;
     category?: string;
+    imageUrl?: string;
 }
 
 @Component({
     selector: 'app-products',
     standalone: true,
-    imports: [CommonModule, RouterLink, FormsModule, ImportModalComponent],
+    imports: [CommonModule, RouterLink, FormsModule, ImportModalComponent, ToastComponent, ProductModalComponent],
     templateUrl: './products.component.html',
     styleUrls: ['./products.component.css']
 })
@@ -29,12 +34,16 @@ export class ProductsComponent implements OnInit {
     searchTerm: string = '';
 
     showImportModal = false;
+    showProductModal = false;
+    selectedProduct: ProductFormData | null = null;
+    isEditMode = false;
 
     constructor(
         private productService: ProductService,
         private authService: AuthService,
         private router: Router,
-        private importExportService: ImportExportService
+        private importExportService: ImportExportService,
+        private toastService: ToastService
     ) { }
 
     ngOnInit() {
@@ -90,6 +99,56 @@ export class ProductsComponent implements OnInit {
         if (stock === 0) return 'bg-red-100 text-red-800';
         if (stock <= 10) return 'bg-yellow-100 text-yellow-800';
         return 'bg-green-100 text-green-800';
+    }
+
+    openAddProductModal() {
+        this.selectedProduct = null;
+        this.isEditMode = false;
+        this.showProductModal = true;
+    }
+
+    editProduct(product: Product) {
+        this.selectedProduct = {
+            ...product,
+            type: product.type || 'Product'
+        };
+        this.isEditMode = true;
+        this.showProductModal = true;
+    }
+
+    closeProductModal() {
+        this.showProductModal = false;
+        this.selectedProduct = null;
+    }
+
+    saveProduct(productData: ProductFormData) {
+        if (this.isEditMode && productData.id) {
+            // Update existing product
+            this.productService.updateProduct(productData.id, productData).subscribe({
+                next: () => {
+                    this.loadProducts();
+                    this.toastService.success('Product updated successfully!');
+                    this.closeProductModal();
+                },
+                error: (err) => {
+                    console.error('Error updating product:', err);
+                    this.toastService.error('Failed to update product. Please try again.');
+                }
+            });
+        } else {
+            // Create new product
+            this.productService.createProduct(productData).subscribe({
+                next: () => {
+                    this.loadProducts();
+                    this.toastService.success('Product created successfully!');
+                    this.closeProductModal();
+                },
+                error: (err) => {
+                    console.error('Error creating product:', err);
+                    this.toastService.error('Failed to create product. Please try again.');
+                }
+            });
+        }
     }
 
     logout() {

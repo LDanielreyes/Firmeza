@@ -11,6 +11,22 @@ export const routes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
 
+    // Client routes
+    {
+        path: 'catalog',
+        loadComponent: () => import('./pages/catalog/catalog').then(m => m.CatalogComponent)
+    },
+    {
+        path: 'cart',
+        canActivate: [authGuard],
+        loadComponent: () => import('./pages/cart/cart').then(m => m.CartComponent)
+    },
+    {
+        path: 'my-purchases',
+        canActivate: [authGuard],
+        loadComponent: () => import('./pages/my-purchases/my-purchases').then(m => m.MyPurchasesComponent)
+    },
+
     // Admin routes
     {
         path: 'admin',

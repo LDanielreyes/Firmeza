@@ -1,0 +1,56 @@
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+
+export interface Toast {
+    id: number;
+    type: 'success' | 'error' | 'info' | 'warning';
+    message: string;
+    duration?: number;
+}
+
+@Injectable({
+    providedIn: 'root'
+})
+export class ToastService {
+    private toasts$ = new BehaviorSubject<Toast[]>([]);
+    private toastId = 0;
+
+    public toasts = this.toasts$.asObservable();
+
+    show(type: Toast['type'], message: string, duration: number = 3000) {
+        const toast: Toast = {
+            id: this.toastId++,
+            type,
+            message,
+            duration
+        };
+
+        const currentToasts = this.toasts$.value;
+        this.toasts$.next([...currentToasts, toast]);
+
+        if (duration > 0) {
+            setTimeout(() => this.remove(toast.id), duration);
+        }
+    }
+
+    success(message: string, duration?: number) {
+        this.show('success', message, duration);
+    }
+
+    error(message: string, duration?: number) {
+        this.show('error', message, duration);
+    }
+
+    info(message: string, duration?: number) {
+        this.show('info', message, duration);
+    }
+
+    warning(message: string, duration?: number) {
+        this.show('warning', message, duration);
+    }
+
+    remove(id: number) {
+        const currentToasts = this.toasts$.value;
+        this.toasts$.next(currentToasts.filter(t => t.id !== id));
+    }
+}

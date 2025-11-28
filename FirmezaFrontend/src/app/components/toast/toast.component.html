@@ -1,0 +1,20 @@
+<div class="toast-container">
+    <div *ngFor="let toast of toasts" [class]="'toast ' + getColor(toast.type)">
+        <div class="toast-content">
+            <div class="toast-icon" [class]="getIconColor(toast.type)">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        [attr.d]="getIcon(toast.type)" />
+                </svg>
+            </div>
+            <div class="toast-message">
+                {{ toast.message }}
+            </div>
+            <button (click)="close(toast.id)" class="toast-close">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>

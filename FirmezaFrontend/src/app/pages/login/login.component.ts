@@ -40,7 +40,7 @@ export class LoginComponent {
                     if (this.authService.isAdmin()) {
                         this.router.navigate(['/admin/dashboard']);
                     } else {
-                        this.router.navigate(['/landing']);
+                        this.router.navigate(['/catalog']);
                     }
                 },
                 error: (err) => {

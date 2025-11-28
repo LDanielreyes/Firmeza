@@ -94,4 +94,19 @@ export class AuthService {
             return null;
         }
     }
+
+    getCurrentUser(): { id: number; email: string; role: string } | null {
+        const token = this.getToken();
+        if (!token) return null;
+        try {
+            const decoded: any = jwtDecode(token);
+            return {
+                id: parseInt(decoded.sub || decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier']),
+                email: decoded.email || decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'],
+                role: this.getRoleFromToken() || ''
+            };
+        } catch (e) {
+            return null;
+        }
+    }
 }

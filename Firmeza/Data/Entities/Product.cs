@@ -16,9 +16,8 @@ namespace Firmeza.Data.Entities
         [StringLength(500)]
         public string? Description { get; set; }
 
-        [Required]
         [StringLength(50)]
-        public string Type { get; set; } = default!;
+        public string? Type { get; set; } = "Product";
 
         [Column(TypeName = "decimal(18, 2)")]
         [Required]
@@ -28,7 +27,7 @@ namespace Firmeza.Data.Entities
         [Range(0, int.MaxValue)]
         public int Stock { get; set; }
 
-        [StringLength(255)]
+        [StringLength(20000)]
         [Display(Name = "Image URL")]
         public string? ImageUrl { get; set; }
 
