@@ -3,6 +3,7 @@ using Firmeza.Data;
 using Firmeza.Data.Entities;
 using FirmezaAPI.Controllers;
 using FirmezaAPI.DTOs;
+using FirmezaAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -13,6 +14,8 @@ namespace Firmeza.Tests
     public class ProductsControllerTests
     {
         private readonly Mock<IMapper> _mockMapper;
+        private readonly ProductImportService _importService;
+        private readonly ProductExportService _exportService;
         private readonly ApplicationDbContext _context;
         private readonly ProductsController _controller;
 
@@ -24,7 +27,10 @@ namespace Firmeza.Tests
 
             _context = new ApplicationDbContext(options);
             _mockMapper = new Mock<IMapper>();
-            _controller = new ProductsController(_context, _mockMapper.Object);
+            _importService = new ProductImportService(_context);
+            _exportService = new ProductExportService(_context);
+            _controller = new ProductsController(_context, _mockMapper.Object, 
+                _importService, _exportService);
         }
 
         [Fact]

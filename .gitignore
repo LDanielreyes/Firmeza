@@ -1,5 +1,331 @@
+##########################
+# .NET Core / ASP.NET
+##########################
 bin/
 obj/
-/packages/
-riderModule.iml
-/_ReSharper.Caches/
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.userprefs
+*.lock.json
+*.csproj.user
+*.dbmdl
+*.jfm
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+##########################
+# Build Results
+##########################
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+##########################
+# NuGet Packages
+##########################
+*.nuget
+*.nupkg
+*.snupkg
+**/packages/*
+!**/packages/build/
+*.nuget.props
+*.nuget.targets
+
+##########################
+# Test Results
+##########################
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.trx
+*.coverage
+*.coveragexml
+
+##########################
+# Node.js / Angular
+##########################
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+dist/
+out/
+build/
+coverage/
+.angular/
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+
+##########################
+# Sensitive Files & Secrets
+##########################
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+
+# Configuration files with secrets
+appsettings.json
+appsettings.*.json
+!appsettings.Development.json.example
+secrets.json
+config.json
+*.config.json
+
+# Connection strings
+connectionstrings.json
+database.json
+
+# Certificates and keys
+*.pfx
+*.p12
+*.key
+*.pem
+*.crt
+*.cer
+*.jks
+*.keystore
+*.truststore
+*.ppk
+
+# SSH keys
+id_rsa
+id_dsa
+id_ecdsa
+id_ed25519
+*.pub
+
+# AWS credentials
+.aws/
+credentials
+config
+
+# Azure
+*.azureauth
+*.publishsettings
+
+# API Keys
+api-keys.txt
+*.apikey
+
+##########################
+# Database
+##########################
+*.db
+*.sqlite
+*.sqlite3
+*.db-shm
+*.db-wal
+*.mdf
+*.ldf
+*.bak
+
+##########################
+# Logs
+##########################
+*.log
+logs/
+*.log.*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+##########################
+# OS Generated Files
+##########################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+##########################
+# IDE / Editor
+##########################
+# Visual Studio
+.vs/
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.swp
+*~
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+.idea_modules/
+
+# Visual Studio Code
+.vscode/
+!.vscode/settings.json.example
+!.vscode/tasks.json.example
+!.vscode/launch.json.example
+!.vscode/extensions.json.example
+
+##########################
+# Docker
+##########################
+# Don't ignore docker files themselves
+# But ignore runtime data
+docker-compose.override.yml
+.docker/
+*.docker.env
+
+##########################
+# Temporary Files
+##########################
+*.tmp
+*.temp
+*.cache
+*.swp
+*.swo
+*~
+.*.swp
+.*.swo
+
+##########################
+# Archive Files
+##########################
+*.zip
+*.tar
+*.tar.gz
+*.tar.xz
+*.rar
+*.7z
+
+##########################
+# Backup Files
+##########################
+*.bak
+*.backup
+*.old
+*_backup
+*_old
+
+##########################
+# User-specific files
+##########################
+*.suo
+*.user
+*.sln.docstates
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.opendb
+*.VC.db
+
+##########################
+# Docker volumes & data
+##########################
+volumes/
+data/
+pgdata/
+
+##########################
+# CI/CD & Deployment
+##########################
+.terraform/
+*.tfstate
+*.tfstate.backup
+.vagrant/
+.serverless/
+
+##########################
+# Package managers
+##########################
+package-lock.json.bak
+yarn.lock.bak
+.pnp.*
+
+##########################
+# macOS
+##########################
+.AppleDouble
+.LSOverride
+Icon
+._*
+
+##########################
+# Windows
+##########################
+$RECYCLE.BIN/
+Desktop.ini
+
+##########################
+# Linux
+##########################
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+##########################
+# JetBrains
+##########################
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+##########################
+# Compiled files
+##########################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+*.dylib
+
+##########################
+# Application specific
+##########################
+# Uploaded files (if applicable)
+uploads/
+wwwroot/uploads/
+
+# Generated reports
+reports/
+*.pdf
+*.xlsx
+*.csv
+!examples/*.pdf
+!examples/*.xlsx
+
+##########################
+# Keep examples and templates
+##########################
+!templates/
+!examples/
+!.gitkeep

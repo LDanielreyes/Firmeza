@@ -1,13 +1,45 @@
-version: '3.4'
-
 services:
-  firmezaapi:
-    image: firmezaapi
+  tests:
     build:
       context: .
-      dockerfile: Dockerfile
-    ports:
-      - "5273:8080"
+      dockerfile: Firmeza.Tests/Dockerfile
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__PostgreSQLConnection=${POSTGRES_CONNECTION_STRING}
+      - ConnectionStrings__DefaultConnection=Host=bzpnokwghso7dj2r4ahd-postgresql.services.clever-cloud.com;Username=uzyyecjcjwhy8imk7o0v;Password=LUIP7wWdwbU4JwfS6SfegJRcnWFxaO;Database=bzpnokwghso7dj2r4ahd;Port=50013;
+
+  api:
+    build:
+      context: .
+      dockerfile: FirmezaAPI/Dockerfile
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=bzpnokwghso7dj2r4ahd-postgresql.services.clever-cloud.com;Username=uzyyecjcjwhy8imk7o0v;Password=LUIP7wWdwbU4JwfS6SfegJRcnWFxaO;Database=bzpnokwghso7dj2r4ahd;Port=50013;
+      - ASPNETCORE_URLS=http://+:8080
+    ports:
+      - "5001:8080"
+    depends_on:
+      tests:
+        condition: service_completed_successfully
+
+  firmeza-blazor:
+    build:
+      context: .
+      dockerfile: Firmeza/Dockerfile
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=bzpnokwghso7dj2r4ahd-postgresql.services.clever-cloud.com;Username=uzyyecjcjwhy8imk7o0v;Password=LUIP7wWdwbU4JwfS6SfegJRcnWFxaO;Database=bzpnokwghso7dj2r4ahd;Port=50013;
+      - ASPNETCORE_URLS=http://+:8080
+    ports:
+      - "5000:8080"
+    depends_on:
+      tests:
+        condition: service_completed_successfully
+
+  firmeza-frontend:
+    build:
+      context: .
+      dockerfile: FirmezaFrontend/Dockerfile
+    ports:
+      - "4200:80"
+    depends_on:
+      tests:
+        condition: service_completed_successfully
+      api:
+        condition: service_started
