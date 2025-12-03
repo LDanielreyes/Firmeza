@@ -13,6 +13,7 @@ services:
     environment:
       - ConnectionStrings__DefaultConnection=Host=bzpnokwghso7dj2r4ahd-postgresql.services.clever-cloud.com;Username=uzyyecjcjwhy8imk7o0v;Password=LUIP7wWdwbU4JwfS6SfegJRcnWFxaO;Database=bzpnokwghso7dj2r4ahd;Port=50013;
       - ASPNETCORE_URLS=http://+:8080
+      - ASPNETCORE_ENVIRONMENT=Development
     ports:
       - "5001:8080"
     depends_on:
@@ -26,6 +27,7 @@ services:
     environment:
       - ConnectionStrings__DefaultConnection=Host=bzpnokwghso7dj2r4ahd-postgresql.services.clever-cloud.com;Username=uzyyecjcjwhy8imk7o0v;Password=LUIP7wWdwbU4JwfS6SfegJRcnWFxaO;Database=bzpnokwghso7dj2r4ahd;Port=50013;
       - ASPNETCORE_URLS=http://+:8080
+      - ASPNETCORE_ENVIRONMENT=Development
     ports:
       - "5000:8080"
     depends_on:
@@ -34,8 +36,8 @@ services:
 
   firmeza-frontend:
     build:
-      context: .
-      dockerfile: FirmezaFrontend/Dockerfile
+      context: ./FirmezaFrontend
+      dockerfile: Dockerfile
     ports:
       - "4200:80"
     depends_on:
